@@ -25,7 +25,7 @@ dyl = 332314562575597579
 class Drifters(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.driftcheck.start()
+        # self.driftcheck.start()
 
     @commands.group(aliases=['d'], hidden=True)
     async def drifters(self, ctx):
