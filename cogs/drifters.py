@@ -128,8 +128,8 @@ class Drifters(commands.Cog):
                     for role in member.roles:
                         memberroles += f"{role.mention}\n"
 
-                    await member.remove_roles(role, reason="User left Drifters")
-                    await member.add_roles(guild.get_role(acquaintance))
+                    # await member.remove_roles(role, reason="User left Drifters")
+                    # await member.add_roles(guild.get_role(acquaintance))
 
             # Commented out to give people time to link
             else:
