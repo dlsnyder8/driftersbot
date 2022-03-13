@@ -95,6 +95,7 @@ class Drifters(commands.Cog):
             return
 
     # @tasks.loop(hours=3)
+
     async def driftcheck(self):
         await log(self.bot, "Drifters Check Started", "Drifters guild members are being checked")
         await log.driftlog(self.bot, "Drifters Check Started", "Drifters guild members are being checked")
@@ -159,6 +160,11 @@ class Drifters(commands.Cog):
 
         log.driftlog2(self.bot, embed)
         log.driftlog2(self.bot, embed2)
+
+    @checks.is_owner()
+    @drifters.command()
+    async def check(self):
+        await self.driftcheck()
 
     @driftcheck.before_loop
     async def before_driftcheck(self):
