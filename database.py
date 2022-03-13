@@ -5,9 +5,11 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.exc import *
 import config
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dateutil import parser
 import asyncio
+import api
+from collections import defaultdict
 
 
 # DATABASE_URL
@@ -30,8 +32,9 @@ Events = Base.classes.events
 Event_info = Base.classes.event_info
 Warinfo = Base.classes.warinfo
 Smackback = Base.classes.smackback
+Stats = Base.classes.stats
 
-asyncengine = create_async_engine(config.ASYNC_DATABASE_URL, pool_size=10)
+asyncengine = create_async_engine(config.ASYNC_DATABASE_URL, pool_size=2)
 session = sessionmaker(
     asyncengine, expire_on_commit=False, class_=AsyncSession
 )
@@ -436,8 +439,8 @@ async def ret_guild_smmoid(discid):
             await con.rollback()
             raise e
 
-# Returns True/False
 
+# Returns True/False
 
 async def is_leader(discid):
     async with session() as con:
@@ -784,42 +787,115 @@ async def rollback():
     async with session() as con:
         await con.rollback()
 
-# async def warinfo_test():
-#     async with session() as con:
-    #     members = session.query(Warinfo.discordid).all()
-    #     for member in members:
-    #         print(member)
-    #         session.query(Warinfo).filter_by(discordid=member[0]).update({Warinfo.last_pinged : datetime.now(timezone.utc)})
-    #         commit()
+
+async def stats_initialized(discordid):
+    async with session() as con:
+        try:
+            return (await con.execute(select(Stats).filter_by(discordid=discordid))).first() is not None
+
+        except Exception as e:
+            await con.rollback()
+            raise e
 
 
-# async def sb_create(tobesmacked : int, guildmember: int, messageid : int):
-#     async with session() as con:
-#         await con.execute(insert(Smackback).values(tobesmacked=tobesmacked,guildmember=guildmember,posted=datetime.now(timezone.utc),messageid=messageid))
-#         await con.commit()
-#         return
+# Profile is specifically the profile from the /api/v1/info endpoint
+async def stats_update(discordid, profile: dict):
 
-# async def sb_iscompleted(id : int):
-#     return session.query(Smackback.completed).filter_by(id=id).first()[0]
+    try:
+        # guildid = profile['guild']['id']
+        guildid = 1
 
-# async def sb_complete(id: int):
-#     session.query(Smackback).filter_by(id=id).update({Smackback.completed : True})
-#     commit()
-#     return
+    except KeyError:
+        return None
+    async with session() as con:
+        try:
+            await con.execute(insert(Stats).values({Stats.discordid: discordid,
+                                                    Stats.guildid: guildid,
+                                                    Stats.level: profile['level'],
+                                                    Stats.steps: profile['steps'],
+                                                    Stats.npc: profile['npc_kills'],
+                                                    Stats.pvp: profile['user_kills'],
+                                                    Stats.quests: profile['quests_performed'],
+                                                    Stats.quests_completed: profile['quests_complete'],
+                                                    Stats.tasks: profile['tasks_completed'],
+                                                    Stats.bosses: profile['boss_kills'],
+                                                    Stats.market_trades: profile['market_trades'],
+                                                    Stats.rep: profile['reputation'],
+                                                    Stats.bounties: profile['bounties_completed'],
+                                                    Stats.dailies: profile['dailies_unlocked'],
+                                                    Stats.chests: profile['chests_opened'],
+                                                    Stats.update_time: datetime.now(
+                                                        timezone.utc)
+                                                    }))
 
-# async def sb_info(id: int):
-#     return session.query(Smackback.tobesmacked,
-#                     Smackback.guildmember,
-#                     Smackback.completed_by,
-#                     Smackback.completed,
-#                     Smackback.messageid,
-#                     Smackback.posted,
-#                     Smackback.completed_at).filter_by(id=id).first()
+            await con.commit()
+
+        except Exception as e:
+            await con.rollback()
+            raise e
+
+
+# Returns list of Stats objects
+async def stats_get_guild(guildid: int):
+    async with session() as con:
+        try:
+            data = await con.execute(select(Stats).filter_by(guildid=guildid))
+            return [r[0] for r in data.fetchall()]
+
+        except Exception as e:
+            await con.rollback()
+            raise e
+
+
+async def stats_get_indiv(discordid):
+    async with session() as con:
+        try:
+            data = await con.execute(select(Stats).filter_by(discordid=discordid))
+            return [r[0] for r in data.fetchall()]
+
+        except Exception as e:
+            await con.rollback()
+            raise e
+
+
+async def stats_get_indiv_day(discordid):
+    async with session() as con:
+        try:
+            last_day = datetime.now(timezone.utc) - timedelta(hours=24)
+            data = await con.execute(select(Stats).filter(Stats.update_time >= last_day, Stats.discordid == discordid))
+            return [r[0] for r in data.fetchall()]
+
+        except Exception as e:
+            await con.rollback()
+            raise e
+
+
+async def stats_get_guild_day(guildid):
+    async with session() as con:
+        try:
+            last_day = datetime.now(timezone.utc) - timedelta(hours=24)
+            data = await con.execute(select(Stats).filter(Stats.update_time >= last_day, Stats.guildid == guildid))
+
+        except Exception as e:
+            await con.rollback()
+            raise e
+
+    data = [r[0] for r in data.fetchall()]
+    
+
+    
 
 
 async def main():
     # async with engine.begin() as conn:
-    print(await is_verified(3853801))
+    # print(await is_verified(3853801))
+
+    # profile = await api.get_all(385801)
+    # profile = {'id': 385801, 'name': 'dyl', 'level': 45007, 'avatar': '/img/sprites/cstm/601e68ae108fe37.png', 'motto': 'DM for assistance or general questions', 'profile_number': '8008', 'exp': 50763610572, 'last_activity': 1647201954, 'gold': 1306669647, 'steps': 28315, 'npc_kills': 20213, 'user_kills': 28717, 'quests_complete': 108, 'quests_performed': 527001, 'dex': 6720, 'def': 5, 'str': 80000, 'bonus_dex': 0, 'bonus_def': 5995,
+    #            'bonus_str': 3550, 'hp': 225080, 'max_hp': 225080, 'safeMode': 1, 'background': 122, 'membership': 1, 'tasks_completed': 179, 'boss_kills': 212, 'market_trades': 16228, 'reputation': 209, 'creation_date': '2020-07-31T19:11:47.000000Z', 'bounties_completed': 2, 'dailies_unlocked': 567, 'chests_opened': 141479, 'current_location': {'name': 'Desert of Eternal Dreams', 'id': 8}, 'guild': {'id': 482, 'name': 'Still Friendly'}}
+
+    # await stats_update(332314562575597579, profile)
+    print(await stats_get_guild_day(1))
 
     # await server_config(731379317182824478)
     # await add_diamond_channel(538144211866746883,538150639872638986)

@@ -12,7 +12,7 @@ CREATE TABLE "server" (
 
 CREATE TABLE "plebs" (
   "smmoid" int PRIMARY KEY,
-  "discid" varchar(64),
+  "discid" bigint,
   "verification" varchar(32),
   "verified" boolean DEFAULT false,
   "pleb_active" boolean DEFAULT false,
@@ -35,7 +35,7 @@ CREATE TABLE "friendly" (
 
 CREATE TABLE "events" (
   "id" SERIAL PRIMARY KEY,
-  "serverid" numeric,
+  "serverid" bigint,
   "name" varchar(64),
   "type" varchar(16),
   "is_started" boolean DEFAULT false,
@@ -43,7 +43,7 @@ CREATE TABLE "events" (
   "start_time" timestamp,
   "end_time" timestamp,
   "friendly_only" bool default true,
-  "event_role" numeric
+  "event_role" bigint
 );
 
 
@@ -63,7 +63,7 @@ CREATE TABLE "warinfo" (
   "min_level" int default 200,
   "max_level" int default 10000,
   "gold_ping" bool default false,
-  "gold_amount" numeric default 5000000,
+  "gold_amount" bigint default 5000000,
   "last_pinged" timestamp default null
 );
 
@@ -79,15 +79,29 @@ CREATE TABLE "smackback" (
 
 );
 
-CREATE TABLE "drifters" {
-  "id" SERIAL PRIMARY KEY,
-  "discordid" numeric,
-  "npc_yesterday" numeric,
-  "npc_today" numeric,
-  "step_yesterday" numeric,
-  "step_today" numeric,
-  "pvp_yesterday" numeric,
-  "pvp_today" numeric,
-  "update_yesterday" timestamp,
-  "update_today" timestamp
-}
+CREATE TABLE "stats" (
+  "discordid" bigint PRIMARY KEY,
+  "guildid" int,
+  "level" bigint,
+  "steps" bigint,
+  "npc" bigint,
+  "pvp" bigint,
+  "quests" bigint,
+  "quests_completed" bigint,
+  "tasks" bigint,
+  "bosses" bigint,
+  "market_trades" bigint,
+  "rep" bigint,
+  "bounties" bigint,
+  "dailies" bigint,
+  "chests" bigint,
+  "update_time" timestamptz
+);
+
+CREATE INDEX idx_guilds on stats USING hash (
+  guildid
+);
+
+CREATE INDEX idx_discid on plebs (
+  discid
+);
