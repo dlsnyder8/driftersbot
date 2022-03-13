@@ -25,7 +25,7 @@ dyl = 332314562575597579
 class Drifters(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # self.driftcheck.start()
+        self.driftcheck.start()
 
     @commands.group(aliases=['d'], hidden=True)
     async def drifters(self, ctx):
@@ -160,15 +160,6 @@ class Drifters(commands.Cog):
         log.driftlog2(self.bot, embed)
         log.driftlog2(self.bot, embed2)
 
-    @checks.is_owner()
-    @drifters.command()
-    async def check(self, ctx):
-        await self.driftcheck()
-
-    @driftcheck.before_loop
-    async def before_driftcheck(self):
-        await self.bot.wait_until_ready()
-
     @tasks.loop(hours=1)
     async def stat_update(self):
         await log.log(self.bot, "Task Started", "Events Stats are being updated")
@@ -187,6 +178,10 @@ class Drifters(commands.Cog):
                 await db.update_stat(event.id,
                                      participant.discordid,
                                      profile[stat_convert[event.type]])
+
+    @driftcheck.before_loop
+    async def before_driftcheck(self):
+        await self.bot.wait_until_ready()
 
     @stat_update.before_loop
     async def before_stat_update(self):
