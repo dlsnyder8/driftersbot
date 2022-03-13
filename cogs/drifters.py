@@ -16,7 +16,7 @@ handler.setFormatter(logging.Formatter(
     '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-drifters = [1158]
+guild = [1158]
 guild_role = 847242243232628737
 acquaintance = 847272102955319306
 dyl = 332314562575597579
@@ -28,7 +28,7 @@ class Drifters(commands.Cog):
         # self.driftcheck.start()
 
     @commands.group(aliases=['d'], hidden=True)
-    async def Drifters(self, ctx):
+    async def drifters(self, ctx):
         if ctx.invoked_subcommand is None:
             pass
 
@@ -65,7 +65,7 @@ class Drifters(commands.Cog):
             return
 
         # if user is in a fly guild....
-        if guildid in drifters or ctx.author.id == dyl:
+        if guildid in guild or ctx.author.id == dyl:
 
             if not await db.in_fly(ctx.author.id):
                 await db.fly_add(ctx.author.id, smmoid, guildid)

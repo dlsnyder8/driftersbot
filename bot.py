@@ -57,12 +57,7 @@ smmo_server = 444067492013408266
 test_server = 538144211866746883
 fly_server = 710258284661178418
 
-plebTask = None
-guildTask = None
-flyTask = None
 
-
-fly = (408, 455, 541, 482)
 dyl = 332314562575597579
 
 
