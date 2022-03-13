@@ -162,7 +162,7 @@ class Drifters(commands.Cog):
 
     @checks.is_owner()
     @drifters.command()
-    async def check(self):
+    async def check(self, ctx):
         await self.driftcheck()
 
     @driftcheck.before_loop
