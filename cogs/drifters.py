@@ -161,7 +161,7 @@ class Drifters(commands.Cog):
         log.driftlog2(self.bot, embed2)
 
     @checks.is_owner()
-    @drifters.commands()
+    @drifters.command()
     async def check(self, ctx):
         await self.driftcheck()
 
