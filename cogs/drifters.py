@@ -96,7 +96,7 @@ class Drifters(commands.Cog):
 
     @tasks.loop(hours=3)
     async def driftcheck(self):
-        await log(self.bot, "Drifters Check Started", "Drifters guild members are being checked")
+        await log.log(self.bot, "Drifters Check Started", "Drifters guild members are being checked")
         await log.driftlog(self.bot, "Drifters Check Started", "Drifters guild members are being checked")
         guild = self.bot.get_guild(846122329661767720)
 
@@ -159,6 +159,11 @@ class Drifters(commands.Cog):
 
         log.driftlog2(self.bot, embed)
         log.driftlog2(self.bot, embed2)
+
+    @checks.is_owner()
+    @drifters.commands()
+    async def check(self, ctx):
+        await self.driftcheck()
 
     @tasks.loop(hours=1)
     async def stat_update(self):
