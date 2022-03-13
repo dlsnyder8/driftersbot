@@ -157,8 +157,8 @@ class Drifters(commands.Cog):
             for split in splitted:
                 embed2.add_field(name="Users", value=' '.join(split))
 
-        log.driftlog2(self.bot, embed)
-        log.driftlog2(self.bot, embed2)
+        await log.driftlog2(self.bot, embed)
+        await log.driftlog2(self.bot, embed2)
 
     @checks.is_owner()
     @drifters.command()
