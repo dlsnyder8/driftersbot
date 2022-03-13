@@ -94,8 +94,7 @@ class Drifters(commands.Cog):
             await ctx.send("You are not in Drifters.")
             return
 
-    # @tasks.loop(hours=3)
-
+    @tasks.loop(hours=3)
     async def driftcheck(self):
         await log(self.bot, "Drifters Check Started", "Drifters guild members are being checked")
         await log.driftlog(self.bot, "Drifters Check Started", "Drifters guild members are being checked")
