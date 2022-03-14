@@ -38,8 +38,6 @@ class Drifters(commands.Cog):
     @commands.cooldown(1, 60, BucketType.user)
     async def join(self, ctx):
         if ctx.author._roles.has(guild_role):
-
-
             await ctx.send("You already have the Drifters role :)")
             return
 
@@ -55,8 +53,6 @@ class Drifters(commands.Cog):
 
         # if user is in a fly guild....
         if guildid in guild or ctx.author.id == dyl:
-
-           
 
             roles_given = ""
             try:
@@ -94,9 +90,10 @@ class Drifters(commands.Cog):
         not_linked = 0
         total = 0
 
-        fly1 = await api.guild_members(1158)
+        temp = await api.guild_members(1158)
 
-        allmembers = fly1
+        allmembers = [x["user_id"] for x in temp]
+
         listUsers = []
         notlinked = []
 
