@@ -39,17 +39,6 @@ class Drifters(commands.Cog):
     async def join(self, ctx):
         if ctx.author._roles.has(guild_role):
 
-            if not await db.in_fly(ctx.author.id):
-                smmoid = await db.get_smmoid(ctx.author.id)
-                profile = await api.get_all(smmoid)
-                try:
-                    guildid = profile["guild"]["id"]
-                except KeyError:
-                    await ctx.send("You are not in a guild, and you are definitely not in Drifters")
-                    return
-                await db.fly_add(ctx.author.id, smmoid, guildid)
-                await ctx.send("Added to database :P")
-                return
 
             await ctx.send("You already have the Drifters role :)")
             return
@@ -67,8 +56,7 @@ class Drifters(commands.Cog):
         # if user is in a fly guild....
         if guildid in guild or ctx.author.id == dyl:
 
-            if not await db.in_fly(ctx.author.id):
-                await db.fly_add(ctx.author.id, smmoid, guildid)
+           
 
             roles_given = ""
             try:
