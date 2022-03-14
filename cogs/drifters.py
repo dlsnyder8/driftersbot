@@ -79,13 +79,13 @@ class Drifters(commands.Cog):
             # add roles
             await ctx.author.add_roles(ctx.guild.get_role(guild_role))
             await ctx.author.remove_roles(ctx.guild.get_role(acquaintance))
-            await ctx.send(f"Welcome to Friendly :)\nYou can run `{ctx.prefix}fly eligibility` (`{ctx.prefix}f e` for short) to check your eligibility for specific roles (more info in <#710305444194680893>)")
+            await ctx.reply(f"Welcome to Drifters :)")
             roles_given += f"<@&{guild_role}>"
 
             await log.driftlog(self.bot, f"{ingamename} has joined Drifters", f"**Roles given to** {ctx.author.mention}\n{roles_given}", ctx.author.id)
             channel = self.bot.get_channel(853507312773627934)
             if ctx.author.id != dyl:
-                await channel.send(f"Welcome {ctx.author.mention} to the Friendliest guild in SimpleMMO!")
+                await channel.send(f"Welcome {ctx.author.mention} to Drifters!")
 
             channel2 = self.bot.get_channel(857518187884576808)
             await channel2.send(f"~adminlink {ctx.author.id} {smmoid}")
