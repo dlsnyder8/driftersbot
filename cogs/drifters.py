@@ -96,6 +96,7 @@ class Drifters(commands.Cog):
 
         listUsers = []
         notlinked = []
+        unabletoremove = []
 
         for member in members:
             if member.id == self.bot.user.id:
@@ -109,25 +110,23 @@ class Drifters(commands.Cog):
 
                 # Has Friendly role, but not in Friendly.
                 else:
-                    listUsers.append(f"{member.mention}")
-                    not_in_fly += 1
-                    memberroles = ""
-                    for role in member.roles:
-                        memberroles += f"{role.mention}\n"
                     try:
                         await member.remove_roles(role, reason="User left Drifters")
                         await member.add_roles(guild.get_role(acquaintance))
+                        listUsers.append(f"{member.mention}")
+                        not_in_fly += 1
                     except discord.Forbidden:
-                        await log.driftlog2(self.bot, Embed(title="Unable to remove role", description=f"Unable to remove role from {member.mention}"))
+                        unabletoremove.append(f"{member.mention}")
 
             # Commented out to give people time to link
             else:
                 # unlinked. remove roles
-                not_linked += 1
-                notlinked.append(f"{member.mention}")
+
                 try:
                     await member.remove_roles(role, reason="User didn't link to the bot")
                     await member.add_roles(guild.get_role(acquaintance))
+                    not_linked += 1
+                    notlinked.append(f"{member.mention}")
                 except discord.Forbidden:
 
                     await log.driftlog2(self.bot, Embed(title="Unable to remove role", description=f"Unable to remove role from {member.mention}"))
@@ -150,8 +149,18 @@ class Drifters(commands.Cog):
             for split in splitted:
                 embed2.add_field(name="Users", value=' '.join(split))
 
+        splitted2 = [unabletoremove[i:i+33]
+                     for i in range(0, len(listUsers), 33)]
+        if len(splitted2) != 0:
+            embed3 = Embed(
+                title="Users Not linked"
+            )
+            for split in splitted2:
+                embed3.add_field(name="Users", value=' '.join(split))
+
         await log.driftlog2(self.bot, embed)
         await log.driftlog2(self.bot, embed2)
+        await log.driftlog2(self.bot, embed3)
 
     @checks.is_owner()
     @drifters.command()
