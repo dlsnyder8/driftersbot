@@ -114,17 +114,23 @@ class Drifters(commands.Cog):
                     memberroles = ""
                     for role in member.roles:
                         memberroles += f"{role.mention}\n"
-
-                    await member.remove_roles(role, reason="User left Drifters")
-                    await member.add_roles(guild.get_role(acquaintance))
+                    try:
+                        await member.remove_roles(role, reason="User left Drifters")
+                        await member.add_roles(guild.get_role(acquaintance))
+                    except discord.Forbidden:
+                        await log.driftlog2(self.bot, Embed(title="Unable to remove role", description=f"Unable to remove role from {member.mention}"))
 
             # Commented out to give people time to link
             else:
                 # unlinked. remove roles
                 not_linked += 1
                 notlinked.append(f"{member.mention}")
-                await member.remove_roles(role, reason="User didn't link to the bot")
-                await member.add_roles(guild.get_role(acquaintance))
+                try:
+                    await member.remove_roles(role, reason="User didn't link to the bot")
+                    await member.add_roles(guild.get_role(acquaintance))
+                except discord.Forbidden:
+
+                    await log.driftlog2(self.bot, Embed(title="Unable to remove role", description=f"Unable to remove role from {member.mention}"))
 
         splitUsers = [listUsers[i:i+33]
                       for i in range(0, len(listUsers), 33)]
