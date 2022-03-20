@@ -135,7 +135,8 @@ class Drifters(commands.Cog):
                       for i in range(0, len(listUsers), 33)]
         if len(splitUsers) != 0:
             embed = Embed(
-                title="Users with Drifters role removed"
+                title="Users with Drifters role removed",
+                description=" "
             )
             for split in splitUsers:
                 embed.add_field(name="Users", value=' '.join(split))
@@ -144,7 +145,8 @@ class Drifters(commands.Cog):
                     for i in range(0, len(listUsers), 33)]
         if len(splitted) != 0:
             embed2 = Embed(
-                title="Users Not linked"
+                title="Users Not linked",
+                description=" "
             )
             for split in splitted:
                 embed2.add_field(name="Users", value=' '.join(split))
@@ -153,7 +155,8 @@ class Drifters(commands.Cog):
                      for i in range(0, len(listUsers), 33)]
         if len(splitted2) != 0:
             embed3 = Embed(
-                title="Users Not linked"
+                title="Users Unable to remove",
+                description=" "
             )
             for split in splitted2:
                 embed3.add_field(name="Users", value=' '.join(split))
