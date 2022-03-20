@@ -25,7 +25,7 @@ dyl = 332314562575597579
 class Drifters(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # self.driftcheck.start()
+        self.driftcheck.start()
 
     @commands.group(aliases=['d'], hidden=True)
     async def drifters(self, ctx):
@@ -113,16 +113,16 @@ class Drifters(commands.Cog):
                     for role in member.roles:
                         memberroles += f"{role.mention}\n"
 
-                    # await member.remove_roles(role, reason="User left Drifters")
-                    # await member.add_roles(guild.get_role(acquaintance))
+                    await member.remove_roles(role, reason="User left Drifters")
+                    await member.add_roles(guild.get_role(acquaintance))
 
             # Commented out to give people time to link
             else:
                 # unlinked. remove roles
                 not_linked += 1
                 notlinked.append(f"{member.mention}")
-            #     await member.remove_roles(role, reason="User didn't link to the bot")
-            #     await member.add_roles(guild.get_role(acquaintance))
+                await member.remove_roles(role, reason="User didn't link to the bot")
+                await member.add_roles(guild.get_role(acquaintance))
 
         splitUsers = [listUsers[i:i+33]
                       for i in range(0, len(listUsers), 33)]
