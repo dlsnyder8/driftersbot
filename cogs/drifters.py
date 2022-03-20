@@ -141,6 +141,8 @@ class Drifters(commands.Cog):
             for split in splitUsers:
                 embed.add_field(name="Users", value=' '.join(split))
 
+            await log.driftlog2(self.bot, embed)
+
         splitted = [notlinked[i:i+33]
                     for i in range(0, len(listUsers), 33)]
         if len(splitted) != 0:
@@ -150,6 +152,8 @@ class Drifters(commands.Cog):
             )
             for split in splitted:
                 embed2.add_field(name="Users", value=' '.join(split))
+
+            await log.driftlog2(self.bot, embed2)
 
         splitted2 = [unabletoremove[i:i+33]
                      for i in range(0, len(listUsers), 33)]
@@ -161,9 +165,7 @@ class Drifters(commands.Cog):
             for split in splitted2:
                 embed3.add_field(name="Users", value=' '.join(split))
 
-        await log.driftlog2(self.bot, embed)
-        await log.driftlog2(self.bot, embed2)
-        await log.driftlog2(self.bot, embed3)
+            await log.driftlog2(self.bot, embed3)
 
     @checks.is_owner()
     @drifters.command()
