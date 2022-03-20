@@ -98,6 +98,8 @@ class Drifters(commands.Cog):
         notlinked = []
 
         for member in members:
+            if member.id == self.bot.id:
+                continue
             total += 1
             if await db.islinked(member.id):
                 smmoid = await db.get_smmoid(member.id)
